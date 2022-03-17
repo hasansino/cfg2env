@@ -1,4 +1,4 @@
-package main
+package cfg2env
 
 import (
 	"bytes"

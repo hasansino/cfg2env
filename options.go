@@ -1,4 +1,4 @@
-package main
+package cfg2env
 
 // Option represents configuration for Exporter
 type Option func(e *Exporter)
