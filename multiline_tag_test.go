@@ -7,7 +7,7 @@ import (
 )
 
 func TestMultilineTag(t *testing.T) {
-	tag := StructTag(`
+	tag := MultilineStructTag(`
 			env:"A"
 			 default:"def_value_of_a"
 			desc:"just a dummy text"`)
@@ -16,7 +16,7 @@ func TestMultilineTag(t *testing.T) {
 	assert.Equal(t, "def_value_of_a", tag.Get("default"))
 	assert.Equal(t, "just a dummy text", tag.Get("desc"))
 
-	tag = StructTag(`
+	tag = MultilineStructTag(`
 	desc:"A is just a dummy value for purpose of this test
 	and should not be used as real example, this text is 
 	just here for placeholder ... testing testing"`)

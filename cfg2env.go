@@ -105,22 +105,26 @@ func (e *Exporter) Export(cfg interface{}) ([]byte, error) {
 	exported := e.reflectCfg(cfg, ``)
 
 	if len(e.headerText) > 0 {
-		if _, err := buff.WriteString(e.headerText + "\n"); err != nil {
+		if _, err := buff.WriteString(e.headerText + "\n\n"); err != nil {
 			return nil, fmt.Errorf("failed to write to file: %v", err)
 		}
 	}
 
 	for i := range exported {
-		if len(exported[i].comment) > 0 {
+		if len(exported[i].comment) > 0 { // comment
 			toWrite := formatComment(exported[i].comment)
 			if exported[i].nestedGroup {
-				toWrite = "##" + toWrite
+				toWrite = "\n##" + toWrite
 			}
-			_, err := buff.WriteString("\n" + toWrite + "\n")
+			toWrite += "\n"
+			if exported[i].nestedGroup {
+				toWrite += "\n"
+			}
+			_, err := buff.WriteString(toWrite)
 			if err != nil {
 				return nil, fmt.Errorf("failed to write to buffer: %v", err)
 			}
-		} else {
+		} else { // variable=value
 			value := exported[i].defValue
 			if strings.Contains(exported[i].defValue, " ") {
 				value = fmt.Sprintf("\"%s\"", value)
@@ -185,15 +189,20 @@ func (e *Exporter) reflectCfg(cfg interface{}, prefix string) []cfgItem {
 				e.reflectCfg(value.Addr().Interface(), fieldPath+".")...,
 			)
 		default:
-			tag := StructTag(field.Tag)
-			if desc := tag.Get(e.descriptionTagName); len(desc) > 0 {
-				exported = append(exported, cfgItem{
-					comment: fmt.Sprintf(
-						"%s (%s) %s", field.Name, field.Type.String(), desc,
-					),
-				})
-			}
+			tag := MultilineStructTag(field.Tag)
 			if envVarName := tag.Get(e.environmentTagName); len(envVarName) > 0 {
+				// variable description [field_name (type) description]
+				itemDescription := cfgItem{
+					comment: fmt.Sprintf(
+						"%s (%s)", field.Name, field.Type.String(),
+					),
+				}
+				if desc := tag.Get(e.descriptionTagName); len(desc) > 0 {
+					itemDescription.comment += " " + desc
+				}
+				exported = append(exported, itemDescription)
+
+				// variable definition [variable=default_value]
 				exported = append(exported, cfgItem{
 					envVarName: envVarName, defValue: tag.Get(e.defaultValueTagName),
 				})

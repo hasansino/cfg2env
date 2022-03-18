@@ -42,9 +42,9 @@ func main() {
 		sync.RWMutex
 
 		A string `env:"A" default:"def_value_of_a"
-        desc:"Just a dummy value for purpose of this test
-        and should not be used as real example, this text is 
-        just here for placeholder ... testing testing"`
+                desc:"Just a dummy value for purpose of this test
+                and should not be used as real example, this text is 
+                just here for placeholder ... testing testing"`
 		B            string `env:"B" default:"def_value_of_b"`
 		TestExcluded struct {
 			Foo int64 `env:"ERROR" default:"ERROR"`
@@ -52,14 +52,14 @@ func main() {
 		}
 		Nested struct {
 			Foo int8 `env:"NESTED_FOO" default:"98"
-            desc:"Simple dummy value for testing"`
+                        desc:"Simple dummy value for testing"`
 			Bar []string `env:"NESTED_BAR" default:"one,two,three"
-            desc:"Simple dummy value for testing"`
+                        desc:"Simple dummy value for testing"`
 			NestedTwo struct {
 				Foo []int64 `env:"NESTED_NESTED2_FOO" default:"1,2,3,4,5,6,7,8,9,0"
-                desc:"Simple dummy value for testing"`
+                                desc:"Simple dummy value for testing"`
 				Bar time.Duration `env:"NESTED_NESTED2_BAR" default:"10s"
-                desc:"Simple dummy value for testing"`
+                                desc:"Simple dummy value for testing"`
 			}
 		}
 	}
@@ -88,13 +88,13 @@ This will generate .env file in project root:
 # and should not be used as real example, this text is 
 # just here for placeholder ... testing testing
 A=def_value_of_a
+# B (string)
 B=def_value_of_b
 
 ### Nested
 
 # Foo (int8) Simple dummy value for testing
 NESTED_FOO=98
-
 # Bar ([]string) Simple dummy value for testing
 NESTED_BAR=one,two,three
 
@@ -102,9 +102,7 @@ NESTED_BAR=one,two,three
 
 # Foo ([]int64) Simple dummy value for testing
 NESTED_NESTED2_FOO=1,2,3,4,5,6,7,8,9,0
-
 # Bar (time.Duration) Simple dummy value for testing
 NESTED_NESTED2_BAR=10s
 
 ```
-

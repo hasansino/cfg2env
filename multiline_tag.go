@@ -5,16 +5,16 @@ import (
 	"strings"
 )
 
-// StructTag is a copy of original golang source code
+// MultilineStructTag is a copy of original golang source code
 // with implemented support for multi-line struct tags.
-type StructTag string
+type MultilineStructTag string
 
-func (tag StructTag) Get(key string) string {
+func (tag MultilineStructTag) Get(key string) string {
 	v, _ := tag.Lookup(key)
 	return v
 }
 
-func (tag StructTag) Lookup(key string) (value string, ok bool) {
+func (tag MultilineStructTag) Lookup(key string) (value string, ok bool) {
 	for tag != "" {
 		// Skip leading space.
 		i := 0
