@@ -48,3 +48,10 @@ func WithHeaderText(t string) Option {
 		e.headerText = t
 	}
 }
+
+// WithExtraEntry adds extra static entry to top of resulting .env file
+func WithExtraEntry(key string, value interface{}) Option {
+	return func(e *Exporter) {
+		e.extraEntries[key] = value
+	}
+}

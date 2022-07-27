@@ -33,6 +33,7 @@ type Exporter struct {
 	descriptionTagName  string
 	fileName            string
 	excludedFields      []string
+	extraEntries        map[string]interface{}
 }
 
 // cfgItem represents single item of configuration
@@ -50,6 +51,7 @@ func New(opts ...Option) *Exporter {
 	e := &Exporter{
 		headerText:     _defHeaderText,
 		excludedFields: make([]string, 0),
+		extraEntries:   make(map[string]interface{}),
 	}
 	for _, v := range _defExcludedFields {
 		e.excludedFields = append(e.excludedFields, v)
@@ -107,6 +109,22 @@ func (e *Exporter) Export(cfg interface{}) ([]byte, error) {
 	if len(e.headerText) > 0 {
 		if _, err := buff.WriteString(e.headerText + "\n\n"); err != nil {
 			return nil, fmt.Errorf("failed to write to file: %v", err)
+		}
+	}
+
+	if len(e.extraEntries) > 0 {
+		if _, err := buff.WriteString("# Extra pre-declared entries\n"); err != nil {
+			return nil, fmt.Errorf("failed to write to buffer: %v", err)
+		}
+		for k, v := range e.extraEntries {
+			if _, err := buff.WriteString(
+				fmt.Sprintf("%s=%v\n", k, v),
+			); err != nil {
+				return nil, fmt.Errorf("failed to write to buffer: %v", err)
+			}
+		}
+		if _, err := buff.WriteString("\n"); err != nil {
+			return nil, fmt.Errorf("failed to write to buffer: %v", err)
 		}
 	}
 

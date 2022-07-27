@@ -69,6 +69,7 @@ func main() {
 		cfg2env.WithDefaultValueTagName("default"),
 		cfg2env.WithHeaderText("# Test Header"),
 		cfg2env.WithExcludedFields("TestExcluded"),
+		cfg2env.WithExtraEntry("COMPOSE_PROJECT_NAME", "cfg2env"),
 	)
 	
 	err := exporter.ToFile(new(testConfig))
@@ -83,6 +84,9 @@ This will generate .env file in project root:
 
 ```dotenv
 # Test Header
+
+# Extra pre-declared entries
+COMPOSE_PROJECT_NAME=cfg2env
 
 # A (string) Just a dummy value for purpose of this test
 # and should not be used as real example, this text is 
