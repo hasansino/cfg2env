@@ -53,9 +53,7 @@ func New(opts ...Option) *Exporter {
 		excludedFields: make([]string, 0),
 		extraEntries:   make(map[string]interface{}),
 	}
-	for _, v := range _defExcludedFields {
-		e.excludedFields = append(e.excludedFields, v)
-	}
+	e.excludedFields = append(e.excludedFields, _defExcludedFields...)
 	for _, o := range opts {
 		o(e) // apply all options if needed
 	}
@@ -117,9 +115,7 @@ func (e *Exporter) Export(cfg interface{}) ([]byte, error) {
 			return nil, fmt.Errorf("failed to write to buffer: %v", err)
 		}
 		for k, v := range e.extraEntries {
-			if _, err := buff.WriteString(
-				fmt.Sprintf("%s=%v\n", k, v),
-			); err != nil {
+			if _, err := fmt.Fprintf(buff, "%s=%v\n", k, v); err != nil {
 				return nil, fmt.Errorf("failed to write to buffer: %v", err)
 			}
 		}
@@ -147,8 +143,7 @@ func (e *Exporter) Export(cfg interface{}) ([]byte, error) {
 			if strings.Contains(exported[i].defValue, " ") {
 				value = fmt.Sprintf("\"%s\"", value)
 			}
-			_, err := buff.WriteString(fmt.Sprintf("%s=%s\n",
-				exported[i].envVarName, exported[i].defValue))
+			_, err := fmt.Fprintf(buff, "%s=%s\n", exported[i].envVarName, value)
 			if err != nil {
 				return nil, fmt.Errorf("failed to write to buffer: %v", err)
 			}
@@ -187,7 +182,7 @@ func (e *Exporter) reflectCfg(cfg interface{}, prefix string) []cfgItem {
 		// skip excluded fields
 		var isExcluded bool
 		for _, n := range e.excludedFields {
-			if strings.ToLower(field.Name) == strings.ToLower(n) {
+			if strings.EqualFold(strings.ToLower(field.Name), strings.ToLower(n)) {
 				isExcluded = true
 				break
 			}
@@ -239,6 +234,6 @@ func formatComment(s string) string {
 	spaces := regexp.MustCompile(` {2,}`)
 	s = spaces.ReplaceAllString(s, " ")
 	// put # char in front of every line
-	s = "# " + strings.Replace(s, "\n", "\n#", -1)
+	s = "# " + strings.ReplaceAll(s, "\n", "\n#")
 	return s
 }
