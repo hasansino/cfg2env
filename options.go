@@ -34,9 +34,7 @@ func WithExportedFileName(v string) Option {
 // Default: [RWMutex]
 func WithExcludedFields(fields ...string) Option {
 	return func(e *Exporter) {
-		for _, f := range fields {
-			e.excludedFields = append(e.excludedFields, f)
-		}
+		e.excludedFields = append(e.excludedFields, fields...)
 	}
 }
 

@@ -1,6 +1,3 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/hasansino/cfg2env)](https://goreportcard.com/report/github.com/hasansino/cfg2env)
-[![Build Status](https://travis-ci.com/hasansino/cfg2env.svg?branch=master)](https://travis-ci.com/hasansino/cfg2env)
-
 # cfg2env
 
 cfg2env is a tool to convert configuration objects to .env format.  
