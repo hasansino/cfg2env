@@ -1,8 +1,9 @@
 # cfg2env
 
-cfg2env is a tool to convert configuration objects to .env format.  
+cfg2env is a tool to convert configuration objects to .env format.
 
 Features:
+
 * Text header for generated files
 * Configurable tag names (environment variable name, default value and description)
 * Excluded fields
@@ -11,14 +12,14 @@ Features:
 ## Installation
 
 ```bash
-~ $ go get -u github.com/hasansino/cfg2env
+~ $ go get github.com/hasansino/cfg2env
 ```
 
 ## Usage
 
 cfg2env is intended to be used in your application code and not as binary.  
 It is best practice creating a file under cmd/cfg2env/main.go and manually running it  
-since the result will depend on latest version of your configuration object. 
+since the result will depend on latest version of your configuration object.
 
 ## Example
 
@@ -68,7 +69,7 @@ func main() {
 		cfg2env.WithExcludedFields("TestExcluded"),
 		cfg2env.WithExtraEntry("COMPOSE_PROJECT_NAME", "cfg2env"),
 	)
-	
+
 	err := exporter.ToFile(new(testConfig))
 	if err != nil {
 		log.Fatal(err)

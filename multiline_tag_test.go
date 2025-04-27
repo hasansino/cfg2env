@@ -21,5 +21,9 @@ func TestMultilineTag(t *testing.T) {
 	and should not be used as real example, this text is 
 	just here for placeholder ... testing testing"`)
 
-	assert.Equal(t, "A is just a dummy value for purpose of this test\n\tand should not be used as real example, this text is \n\tjust here for placeholder ... testing testing", tag.Get("desc"))
+	assert.Equal(
+		t,
+		"A is just a dummy value for purpose of this test\n\tand should not be used as real example, this text is \n\tjust here for placeholder ... testing testing",
+		tag.Get("desc"),
+	)
 }
