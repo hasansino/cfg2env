@@ -7,12 +7,13 @@ Features:
 * Text header for generated files
 * Configurable tag names (environment variable name, default value and description)
 * Excluded fields
-* (Optional) Description tags with multi-line support (see example)
+* Description tags with multi-line support (see example)
+* Add extra tag to be included in field description
 
 ## Installation
 
 ```bash
-~ $ go get github.com/hasansino/cfg2env
+go get github.com/hasansino/cfg2env
 ```
 
 ## Usage
@@ -44,6 +45,7 @@ func main() {
                 and should not be used as real example, this text is 
                 just here for placeholder ... testing testing"`
 		B            string `env:"B" default:"def_value_of_b"`
+		C            string `env:"C" default:"def_value_of_c" validate:"required"`
 		TestExcluded struct {
 			Foo int64 `env:"ERROR" default:"ERROR"`
 			Bar int64 `env:"ERROR" default:"ERROR"`
@@ -68,6 +70,7 @@ func main() {
 		cfg2env.WithHeaderText("# Test Header"),
 		cfg2env.WithExcludedFields("TestExcluded"),
 		cfg2env.WithExtraEntry("COMPOSE_PROJECT_NAME", "cfg2env"),
+		cfg2env.WithExtraTagExtraction("validate"),
 	)
 
 	err := exporter.ToFile(new(testConfig))
@@ -92,6 +95,9 @@ COMPOSE_PROJECT_NAME=cfg2env
 A=def_value_of_a
 # B (string)
 B=def_value_of_b
+# C (string)
+# Tag: validate -> required
+C=def_value_of_c
 
 ### Nested
 
@@ -106,5 +112,4 @@ NESTED_BAR=one,two,three
 NESTED_NESTED2_FOO=1,2,3,4,5,6,7,8,9,0
 # Bar (time.Duration) Simple dummy value for testing
 NESTED_NESTED2_BAR=10s
-
 ```

@@ -53,3 +53,10 @@ func WithExtraEntry(key string, value interface{}) Option {
 		e.extraEntries[key] = value
 	}
 }
+
+// WithExtraTagExtraction adds tag to be included in variable description
+func WithExtraTagExtraction(tag string) Option {
+	return func(e *Exporter) {
+		e.extraTags = append(e.extraTags, tag)
+	}
+}

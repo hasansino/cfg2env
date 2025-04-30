@@ -16,6 +16,7 @@ type testConfig struct {
         and should not be used as real example, this text is 
         just here for placeholder ... testing testing"`
 	B            string `env:"B" default:"def_value_of_b"`
+	C            string `env:"C" default:"def_value_of_c" validate:"oneof=one two three"`
 	TestExcluded struct {
 		Foo int64 `env:"ERROR" default:"ERROR"`
 		Bar int64 `env:"ERROR" default:"ERROR"`
@@ -41,6 +42,7 @@ func _newExporter() *Exporter {
 		WithHeaderText("# Test Header"),
 		WithExcludedFields("TestExcluded"),
 		WithExtraEntry("COMPOSE_PROJECT_NAME", "cfg2env"),
+		WithExtraTagExtraction("validate"),
 	)
 }
 
@@ -57,6 +59,6 @@ func TestExport(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	expected := "# Test Header\n\n# Extra pre-declared entries\nCOMPOSE_PROJECT_NAME=cfg2env\n\n# A (string) Just a dummy value for purpose of this test\n# and should not be used as real example, this text is \n# just here for placeholder ... testing testing\nA=def_value_of_a\n# B (string)\nB=def_value_of_b\n\n### Nested\n\n# Foo (int8) Simple dummy value for testing\nNESTED_FOO=98\n# Bar ([]string) Simple dummy value for testing\nNESTED_BAR=one,two,three\n\n### Nested.NestedTwo\n\n# Foo ([]int64) Simple dummy value for testing\nNESTED_NESTED2_FOO=1,2,3,4,5,6,7,8,9,0\n# Bar (time.Duration) Simple dummy value for testing\nNESTED_NESTED2_BAR=10s\n"
+	expected := "# Test Header\n\n# Extra pre-declared entries\nCOMPOSE_PROJECT_NAME=cfg2env\n\n# A (string) Just a dummy value for purpose of this test\n# and should not be used as real example, this text is \n# just here for placeholder ... testing testing\nA=def_value_of_a\n# B (string)\nB=def_value_of_b\n# C (string)\n# Tag: validate -> oneof=one two three\nC=def_value_of_c\n\n### Nested\n\n# Foo (int8) Simple dummy value for testing\nNESTED_FOO=98\n# Bar ([]string) Simple dummy value for testing\nNESTED_BAR=one,two,three\n\n### Nested.NestedTwo\n\n# Foo ([]int64) Simple dummy value for testing\nNESTED_NESTED2_FOO=1,2,3,4,5,6,7,8,9,0\n# Bar (time.Duration) Simple dummy value for testing\nNESTED_NESTED2_BAR=10s\n"
 	assert.Equal(t, expected, string(d))
 }

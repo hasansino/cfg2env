@@ -34,6 +34,7 @@ type Exporter struct {
 	fileName            string
 	excludedFields      []string
 	extraEntries        map[string]interface{}
+	extraTags           []string
 }
 
 // cfgItem represents single item of configuration
@@ -214,6 +215,16 @@ func (e *Exporter) reflectCfg(cfg interface{}, prefix string) []cfgItem {
 					itemDescription.comment += " " + desc
 				}
 				exported = append(exported, itemDescription)
+
+				// extract extra tags
+				for i := range e.extraTags {
+					if v := tag.Get(e.extraTags[i]); len(v) > 0 {
+						extraTagline := fmt.Sprintf("Tag: %s -> %s", e.extraTags[i], v)
+						exported = append(exported, cfgItem{
+							comment: extraTagline,
+						})
+					}
+				}
 
 				// variable definition [variable=default_value]
 				exported = append(exported, cfgItem{
