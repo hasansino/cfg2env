@@ -41,25 +41,33 @@ func main() {
 		sync.RWMutex
 
 		A string `env:"A" default:"def_value_of_a"
-                desc:"Just a dummy value for purpose of this test
-                and should not be used as real example, this text is 
-                just here for placeholder ... testing testing"`
+        desc:"Just a dummy value for purpose of this test
+        and should not be used as real example, this text is 
+        just here for placeholder ... testing testing"`
 		B            string `env:"B" default:"def_value_of_b"`
-		C            string `env:"C" default:"def_value_of_c" validate:"required"`
+		C            string `env:"C" default:"def_value_of_c" validate:"oneof=one two three"`
 		TestExcluded struct {
 			Foo int64 `env:"ERROR" default:"ERROR"`
 			Bar int64 `env:"ERROR" default:"ERROR"`
 		}
 		Nested struct {
 			Foo int8 `env:"NESTED_FOO" default:"98"
-                        desc:"Simple dummy value for testing"`
+            desc:"Simple dummy value for testing"`
 			Bar []string `env:"NESTED_BAR" default:"one,two,three"
-                        desc:"Simple dummy value for testing"`
+            desc:"Simple dummy value for testing"`
 			NestedTwo struct {
 				Foo []int64 `env:"NESTED_NESTED2_FOO" default:"1,2,3,4,5,6,7,8,9,0"
-                                desc:"Simple dummy value for testing"`
+                desc:"Simple dummy value for testing"`
 				Bar time.Duration `env:"NESTED_NESTED2_BAR" default:"10s"
-                                desc:"Simple dummy value for testing"`
+                desc:"Simple dummy value for testing"`
+			}
+		}
+		DeepNested struct {
+			DeepNested2 struct {
+				DeepNested3 struct {
+					Foo string `env:"DEEP_NESTED_FOO" default:"foo"`
+					Bar string `env:"DEEP_NESTED_BAR" default:"bar"`
+				}
 			}
 		}
 	}
@@ -67,6 +75,7 @@ func main() {
 	exporter := cfg2env.New(
 		cfg2env.WithEnvironmentTagName("env"),
 		cfg2env.WithDefaultValueTagName("default"),
+		cfg2env.WithDescriptionTagName("desc"),
 		cfg2env.WithHeaderText("# Test Header"),
 		cfg2env.WithExcludedFields("TestExcluded"),
 		cfg2env.WithExtraEntry("COMPOSE_PROJECT_NAME", "cfg2env"),
@@ -96,20 +105,31 @@ A=def_value_of_a
 # B (string)
 B=def_value_of_b
 # C (string)
-# Tag: validate -> required
+# Tag: validate -> oneof=one two three
 C=def_value_of_c
 
-### Nested
+## Nested
 
 # Foo (int8) Simple dummy value for testing
 NESTED_FOO=98
 # Bar ([]string) Simple dummy value for testing
 NESTED_BAR=one,two,three
 
-### Nested.NestedTwo
+## Nested.NestedTwo
 
 # Foo ([]int64) Simple dummy value for testing
 NESTED_NESTED2_FOO=1,2,3,4,5,6,7,8,9,0
 # Bar (time.Duration) Simple dummy value for testing
 NESTED_NESTED2_BAR=10s
+
+## DeepNested
+
+## DeepNested.DeepNested2
+
+## DeepNested.DeepNested2.DeepNested3
+
+# Foo (string)
+DEEP_NESTED_FOO=foo
+# Bar (string)
+DEEP_NESTED_BAR=bar
 ```

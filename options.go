@@ -4,7 +4,7 @@ package cfg2env
 type Option func(e *Exporter)
 
 // WithEnvironmentTagName sets custom tag name to determine environment variable name
-// Default: envconfig
+// Default: env
 func WithEnvironmentTagName(v string) Option {
 	return func(e *Exporter) {
 		e.environmentTagName = v
@@ -16,6 +16,14 @@ func WithEnvironmentTagName(v string) Option {
 func WithDefaultValueTagName(v string) Option {
 	return func(e *Exporter) {
 		e.defaultValueTagName = v
+	}
+}
+
+// WithDescriptionTagName sets custom name to determine description tag name
+// Default: desc
+func WithDescriptionTagName(v string) Option {
+	return func(e *Exporter) {
+		e.descriptionTagName = v
 	}
 }
 

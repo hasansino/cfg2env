@@ -13,7 +13,7 @@ import (
 // default values
 const (
 	_defHeaderText          = `# Default configuration`
-	_defEnvironmentTagName  = `envconfig`
+	_defEnvironmentTagName  = `env`
 	_defDefaultValueTagName = `default`
 	_defDescriptionTagName  = `desc`
 	_defFileName            = `.env`
@@ -120,33 +120,49 @@ func (e *Exporter) Export(cfg interface{}) ([]byte, error) {
 				return nil, fmt.Errorf("failed to write to buffer: %v", err)
 			}
 		}
-		if _, err := buff.WriteString("\n"); err != nil {
-			return nil, fmt.Errorf("failed to write to buffer: %v", err)
+		// avoid double newline if nothing to export
+		if len(exported) > 0 {
+			if _, err := buff.WriteString("\n"); err != nil {
+				return nil, fmt.Errorf("failed to write to buffer: %v", err)
+			}
 		}
 	}
 
 	for i := range exported {
-		if len(exported[i].comment) > 0 { // comment
+		if len(exported[i].comment) > 0 {
+			// comment, either nested group or variable related
+			// ---
 			toWrite := formatComment(exported[i].comment)
 			if exported[i].nestedGroup {
-				toWrite = "\n##" + toWrite
+				toWrite = "#" + toWrite
 			}
 			toWrite += "\n"
 			if exported[i].nestedGroup {
 				toWrite += "\n"
 			}
+			// ---
 			_, err := buff.WriteString(toWrite)
 			if err != nil {
 				return nil, fmt.Errorf("failed to write to buffer: %v", err)
 			}
-		} else { // variable=value
+		} else {
+			// variable=value
+			// ---
 			value := exported[i].defValue
 			if strings.Contains(exported[i].defValue, " ") {
 				value = fmt.Sprintf("\"%s\"", value)
 			}
+			// ---
 			_, err := fmt.Fprintf(buff, "%s=%s\n", exported[i].envVarName, value)
 			if err != nil {
 				return nil, fmt.Errorf("failed to write to buffer: %v", err)
+			}
+			// ---
+			if len(exported) > i+1 && exported[i+1].nestedGroup {
+				_, err := fmt.Fprintf(buff, "\n")
+				if err != nil {
+					return nil, fmt.Errorf("failed to write to buffer: %v", err)
+				}
 			}
 		}
 	}
