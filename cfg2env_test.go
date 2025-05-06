@@ -130,7 +130,7 @@ func TestReflectCfg_AllTypes(t *testing.T) {
 func TestReflectCfg_UnexportedFields(t *testing.T) {
 	type s struct {
 		Exported   string `env:"EXPORTED"   default:"ok"`
-		unexported string `env:"UNEXPORTED" default:"fail"`
+		unexported string `env:"UNEXPORTED" default:"fail"` //nolint:unused
 	}
 	e := New(WithEnvironmentTagName("env"), WithDefaultValueTagName("default"))
 	items := e.reflectCfg(&s{}, "")
